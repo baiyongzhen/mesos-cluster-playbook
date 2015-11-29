@@ -1,0 +1,4 @@
+- src: https://github.com/mymesos/ansible-docker
+  path: roles
+  version: master
+  scm: git
