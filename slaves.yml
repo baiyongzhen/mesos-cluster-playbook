@@ -1,0 +1,10 @@
+---
+- hosts: slaves
+  sudo: yes
+  roles:
+    - role: ansible-docker
+      tags:
+        - docker
+    - role: ansible-slave
+      tags:
+        - slave

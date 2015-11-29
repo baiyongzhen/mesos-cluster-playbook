@@ -1,0 +1,95 @@
+---
+- name: Add apt key for mesos
+  apt_key: keyserver=keyserver.ubuntu.com id=E56151BF
+
+- name: Set DISTRO variable
+  shell: "lsb_release -is | tr '[:upper:]' '[:lower:]'"
+  register: distro_var
+
+- name: Set CODENAME variable
+  shell: "lsb_release -cs"
+  register: codename_var
+
+- name: Add apt repository for mesos
+  apt_repository: repo="deb http://repos.mesosphere.com/{{ distro_var.stdout }} {{ codename_var.stdout }} main" update_cache=yes
+
+- name: Add openjdk repository
+  apt_repository: repo="ppa:openjdk-r/ppa"
+  when: ansible_lsb.id == 'Ubuntu'
+
+- name: Install mesos and marathon
+  apt: name={{item}} update_cache=yes
+  with_items:
+    - mesos
+    - openjdk-8-jre-headless
+    - marathon
+
+- name: Set zookeeper ID
+  template: src=zookeeper/myid.j2 dest=/etc/zookeeper/conf/myid
+  notify:
+    - Restart zookeeper
+
+- name: Append zookeeper IP addresses
+  lineinfile: 
+    dest: /etc/zookeeper/conf/zoo.cfg 
+    line: "server.{{ hostvars[item].zoo_id }}={{ item }}:2888:3888"
+    regexp: "^server.{{ hostvars[item].zoo_id }}"
+  with_items: "{{ groups.masters }}"
+  notify:
+    - Restart zookeeper
+
+- name: Set zookeeper address for mesos
+  template: src=master/zk.j2 dest=/etc/mesos/zk
+  notify:
+    - Restart mesos-master
+    - Restart marathon
+
+- name: Set quorum
+  template: src=master/quorum.j2 dest=/etc/mesos-master/quorum
+  notify:
+    - Restart mesos-master
+
+- name: Ensure /etc/marathon/conf directory
+  file: path=/etc/marathon/conf state=directory
+
+- name: Set mesos-master hostname
+  template: src=hostname.j2 dest=/etc/mesos-master/hostname
+  notify:
+    - Restart mesos-master
+
+- name: Ensure /etc/marathon/conf directory
+  file: path=/etc/marathon/conf state=directory
+
+- name: Set marathon hostname
+  template: src=hostname.j2 dest=/etc/marathon/conf/hostname
+  notify:
+    - Restart mesos-master
+
+- name: Stop mesos-slave
+  service: name=mesos-slave state=stopped
+
+- name: Disable mesos-slave
+  copy: src=mesos-slave.override dest=/etc/init/mesos-slave.override
+
+- name: Set LIBPROCESS_IP env
+  lineinfile:
+    dest: /etc/default/mesos
+    regexp: "^LIBPROCESS_IP"
+    line: "LIBPROCESS_IP={{ inventory_hostname }}"
+  notify:
+    - Restart mesos-master
+
+- name: Set LIBPROCESS_ADVERTISE_IP env
+  lineinfile:
+    dest: /etc/default/mesos
+    regexp: "^LIBPROCESS_ADVERTISE_IP"
+    line: "LIBPROCESS_ADVERTISE_IP={{ inventory_hostname }}"
+  notify:
+    - Restart mesos-master
+
+- name: Start services
+  service: name={{item}} state=started
+  with_items:
+    - zookeeper
+    - mesos-master
+    - marathon

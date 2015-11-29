@@ -1,0 +1,7 @@
+---
+- hosts: masters
+  sudo: yes
+  roles:
+    - role: ansible-master
+      tags:
+        - master
