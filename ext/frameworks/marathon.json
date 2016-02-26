@@ -25,11 +25,9 @@
             "forcePullImage": true
         }
     },
-    "env": [
-        {
-            "TZ": "Asia/Seoul"
-        }
-    ],
+    "env": {
+        "TZ": "Asia/Seoul"
+    },
     "healthChecks": [
         {
             "protocol": "HTTP",
