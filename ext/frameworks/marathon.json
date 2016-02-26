@@ -19,19 +19,17 @@
     "requirePorts": true,
     "container": {
         "type": "DOCKER",
-        "volumes": [
-            {
-                "containerPath": "/etc/localtime",
-                "hostPath": "/etc/localtime",
-                "mode": "RO"
-            }
-        ],
         "docker": {
             "image": "mesosphere/marathon:v0.15.3",
             "network": "HOST",
             "forcePullImage": true
         }
     },
+    "env": [
+        {
+            "TZ": "Asia/Seoul"
+        }
+    ],
     "healthChecks": [
         {
             "protocol": "HTTP",

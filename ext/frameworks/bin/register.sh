@@ -5,4 +5,4 @@ if [ $# != 1 ]; then
   exit 1
 fi
 
-curl -XPOST -H "Content-Type: application/json" http://10.142.142.10:8080/v2/apps -d @"../json/$1.json"
+curl -XPOST -H "Content-Type: application/json" http://10.142.142.10:8080/v2/apps -d @"../$1.json"
