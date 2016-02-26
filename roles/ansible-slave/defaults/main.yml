@@ -1,2 +1,4 @@
 ---
-# defaults file for ansible-slave
+# Containerizer
+mesos_containerizers: "docker,mesos"
+mesos_executor_timeout: "5mins"

@@ -1,0 +1,32 @@
+{
+    "id": "chronos",
+    "cmd": "/usr/bin/chronos --http_port 31001 --master zk://10.142.142.10:2181/mesos --zk_hosts 10.142.142.10:2181 --zk_path /chronos --mesos_framework_name chronos",
+    "instances": 1,
+    "cpus": 0.1,
+    "mem": 512,
+    "ports": [
+        31001
+    ],
+    "requirePorts": true,
+    "container": {
+        "type": "DOCKER",
+        "volumes": [
+            {
+                "containerPath": "/etc/localtime",
+                "hostPath": "/etc/localtime",
+                "mode": "RO"
+            }
+        ],
+        "docker": {
+            "image": "mesosphere/chronos:chronos-2.4.0-0.1.20151007110204.ubuntu1404-mesos-0.26.0-0.2.145.ubuntu1404",
+            "network": "HOST",
+            "forcePullImage": true
+        }
+    },
+    "healthChecks": [
+        {
+            "protocol": "HTTP",
+            "path": "/"
+        }
+    ]
+}

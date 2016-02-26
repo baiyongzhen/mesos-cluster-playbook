@@ -1,0 +1,41 @@
+{
+    "id": "marathon",
+    "args": [
+        "--master",
+        "zk://10.142.142.10:2181/mesos",
+        "--zk",
+        "zk://10.142.142.10:2181/user/marathon",
+        "--event_subscriber",
+        "http_callback",
+        "--http_port",
+        "31000"
+    ],
+    "instances": 1,
+    "cpus": 0.1,
+    "mem": 512,
+    "ports": [
+        31000
+    ],
+    "requirePorts": true,
+    "container": {
+        "type": "DOCKER",
+        "volumes": [
+            {
+                "containerPath": "/etc/localtime",
+                "hostPath": "/etc/localtime",
+                "mode": "RO"
+            }
+        ],
+        "docker": {
+            "image": "mesosphere/marathon:v0.15.3",
+            "network": "HOST",
+            "forcePullImage": true
+        }
+    },
+    "healthChecks": [
+        {
+            "protocol": "HTTP",
+            "path": "/ping"
+        }
+    ]
+}

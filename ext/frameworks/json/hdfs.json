@@ -1,0 +1,41 @@
+{
+    "id": "hdfs",
+    "env": {
+        "MESOS_HDFS_NAMENODE_HEAP_SIZE": "256",
+        "MESOS_HDFS_JOURNALNODE_CPUS": "0.1",
+        "MESOS_HDFS_JOURNALNODE_COUNT": "3",
+        "MESOS_HDFS_DATANODE_CPUS": "0.1",
+        "DKOS_FRAMEWORK_ID": "22",
+        "MESOS_HDFS_ZKFC_HA_ZOOKEEPER_QUORUM": "10.142.142.10:2181",
+        "MESOS_HDFS_STATE_ZK": "10.142.142.10:2181",
+        "MESOS_HDFS_DATANODE_HEAP_SIZE": "256",
+        "MESOS_MASTER_URI": "zk://10.142.142.10:2181/mesos",
+        "MESOS_HDFS_NAMENODE_CPUS": "0.1"
+    },
+    "instances": 1,
+    "cpus": 0.1,
+    "mem": 512,
+    "ports": [
+        31004
+    ],
+    "requirePorts": true,
+    "container": {
+        "type": "DOCKER",
+        "volumes": [
+            {
+                "containerPath": "/etc/localtime",
+                "hostPath": "/etc/localtime",
+                "mode": "RO"
+            }
+        ],
+        "docker": {
+            "image": "mymesos/hdfs-mesos:v0.1.5_mesos-0.25.0",
+            "forcePullImage": true
+        }
+    },
+    "healthChecks": [
+        {
+            "protocol": "TCP"
+        }
+    ]
+}

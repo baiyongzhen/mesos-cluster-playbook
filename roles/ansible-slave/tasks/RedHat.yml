@@ -5,37 +5,8 @@
 - name: Install mesos
   yum: name=mesos update_cache=yes
 
-- name: Set zookeeper address for mesos
-  template: src=zk.j2 dest=/etc/mesos/zk
-  notify:
-    - Restart mesos-slave
-
-- name: Set hostname
-  template: src=hostname.j2 dest=/etc/mesos-slave/hostname
-  notify:
-    - Restart mesos-slave
-
 - name: Stop mesos-master
   service: name=mesos-master state=stopped
 
 - name: Disable mesos-master
   command: systemctl disable mesos-master.service
-
-- name: Set LIBPROCESS_IP env
-  lineinfile:
-    dest: /etc/default/mesos
-    regexp: "^LIBPROCESS_IP"
-    line: "LIBPROCESS_IP={{ inventory_hostname }}"
-  notify:
-    - Restart mesos-slave
-
-- name: Set LIBPROCESS_ADVERTISE_IP env
-  lineinfile:
-    dest: /etc/default/mesos
-    regexp: "^LIBPROCESS_ADVERTISE_IP"
-    line: "LIBPROCESS_ADVERTISE_IP={{ inventory_hostname }}"
-  notify:
-    - Restart mesos-slave
-
-- name: Start mesos-slave
-  service: name=mesos-slave state=started
