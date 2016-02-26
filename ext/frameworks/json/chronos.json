@@ -2,8 +2,8 @@
     "id": "chronos",
     "cmd": "/usr/bin/chronos --http_port 31001 --master zk://10.142.142.10:2181/mesos --zk_hosts 10.142.142.10:2181 --zk_path /chronos --mesos_framework_name chronos",
     "instances": 1,
-    "cpus": 0.1,
-    "mem": 512,
+    "cpus": 0.5,
+    "mem": 256,
     "ports": [
         31001
     ],
